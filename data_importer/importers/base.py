@@ -163,7 +163,7 @@ class BaseImporter(object):
         """
         raise NotImplementedError('No reader implemented')
 
-    def clean_field(self, field_name, value):
+    def clean_field(self, field_name, value, values=None):
         """
         User default django field validators to clean content
         and run custom validates
@@ -171,6 +171,9 @@ class BaseImporter(object):
         if self.Meta.model:
             # default django validate field
             try:
+                pre_clean_function = getattr(self, 'pre_clean_%s' % field_name, False)
+                if pre_clean_function:
+                    value = pre_clean_function(value, values=values)
                 field = self.Meta.model._meta.get_field(field_name)
                 field.clean(value, field)
             except FieldDoesNotExist:
@@ -218,10 +221,10 @@ class BaseImporter(object):
 
         for k, v in values.items():
             if self.Meta.raise_errors:
-                values[k] = self.clean_field(k, v)
+                values[k] = self.clean_field(k, v, values=values)
             else:
                 try:
-                    values[k] = self.clean_field(k, v)
+                    values[k] = self.clean_field(k, v, values=values)
                 except StopImporter as e:
                     raise StopImporter(self.get_error_message(e, row))
                 except Exception as e:
