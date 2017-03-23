@@ -60,6 +60,7 @@ class FileHistory(models.Model):
     owner = models.ForeignKey(User, null=True)
     is_task = models.BooleanField(default=DATA_IMPORTER_TASK)
     status = models.IntegerField(choices=CELERY_STATUS, default=1)
+    importation_log = models.TextField('importation log', null=True)
 
     content_type = models.ForeignKey(ContentType, null=True, blank=True)
     object_id = models.PositiveIntegerField(null=True, blank=True)
