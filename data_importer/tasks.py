@@ -52,7 +52,7 @@ class DataImpoterTask(Task):
         if not importer:
             return
 
-        self.parser = importer(source=source)
+        self.parser = importer(source=source, **kwargs)
 
         lock_id = "%s-lock" % (self.name)
 
