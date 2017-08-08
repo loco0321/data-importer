@@ -8,8 +8,8 @@ class XLSHTMLReader(object):
         self.instance = instance
 
     def read(self):
-        html = open(u'{}'.format(self.instance.source), 'rb')
-        beautiful_soup = BeautifulSoup(html, 'html.parser')
+        # html = open(u'{}'.format(self.instance.source), 'rb')
+        beautiful_soup = BeautifulSoup(self.instance.source, 'html.parser')
         main_table = beautiful_soup.find(self.instance.table_selector)
         for tr in main_table.find_all('tr'):
             values = [self.clean_td(td.string) for td in tr.find_all('td')]
@@ -18,4 +18,4 @@ class XLSHTMLReader(object):
 
     @classmethod
     def clean_td(cls, string):
-        return string.replace('\n', '')
+        return string.strip() if string else string
